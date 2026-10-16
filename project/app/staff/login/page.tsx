@@ -1,12 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
-import { getSupabaseBrowserClient } from '@/lib/supabase-browser';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 export default function StaffLoginPage() {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -18,22 +17,35 @@ export default function StaffLoginPage() {
     setError('');
 
     try {
-      const supabase = getSupabaseBrowserClient();
-
-      const { error: authError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+      const res = await fetch('/api/auth/staff-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: username.trim(),
+          password: password.trim(),
+        }),
       });
 
-      if (authError) {
-        console.warn('Supabase Auth warning, using demo staff session:', authError.message);
-        localStorage.setItem('quevaa_mock_staff', JSON.stringify({ email: email || 'admin@quevaa.com' }));
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        setError(data.error || 'Invalid credentials. Access denied.');
+        return;
       }
+
+      // Valid single staff login
+      localStorage.setItem(
+        'quevaa_mock_staff',
+        JSON.stringify({
+          email: data.user.email,
+          username: data.user.username,
+          authenticatedAt: Date.now(),
+        })
+      );
 
       router.push('/staff/dashboard');
     } catch {
-      localStorage.setItem('quevaa_mock_staff', JSON.stringify({ email: email || 'admin@quevaa.com' }));
-      router.push('/staff/dashboard');
+      setError('Connection error. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -68,19 +80,19 @@ export default function StaffLoginPage() {
             )}
 
             <div className="form-group">
-              <label htmlFor="staff-email" className="form-label">
-                Email Address
+              <label htmlFor="staff-username" className="form-label">
+                Username or Email
               </label>
               <input
-                id="staff-email"
-                type="email"
+                id="staff-username"
+                type="text"
                 className="form-input"
-                placeholder="admin@hospital.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                placeholder="admin or admin@quevaa.com"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 disabled={loading}
                 required
-                autoComplete="email"
+                autoComplete="username"
               />
             </div>
 

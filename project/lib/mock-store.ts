@@ -234,11 +234,17 @@ export const mockStore = {
       nextEntry.called_at = new Date().toISOString();
       session.current_token = nextEntry.token_number;
     } else {
-      session.current_token = Math.min(session.current_token + 1, session.total_tokens);
+      // All patients in queue have been visited! Automatically terminate queue session
+      session.status = 'closed';
+      session.current_token = 0;
     }
 
     session.updated_at = new Date().toISOString();
-    return { newToken: session.current_token, sessionId };
+    return {
+      newToken: session.current_token,
+      sessionId,
+      isTerminated: session.status === 'closed',
+    };
   },
 
   skipPatient(sessionId: string) {
@@ -343,6 +349,17 @@ export const mockStore = {
       }))
       .sort((a, b) => a.token_number - b.token_number);
 
+    const waitingCount = entries.filter((e) => e.status === 'waiting').length;
+    const calledCount = entries.filter((e) => e.status === 'called').length;
+    const completedCount = entries.filter((e) => e.status === 'completed').length;
+    const totalCount = entries.length;
+
+    // Auto-terminate session if all patients have been visited
+    if (totalCount > 0 && waitingCount === 0 && calledCount === 0 && session.status !== 'closed') {
+      session.status = 'closed';
+      session.updated_at = new Date().toISOString();
+    }
+
     return {
       session: {
         ...session,
@@ -350,9 +367,9 @@ export const mockStore = {
       },
       doctor,
       entries,
-      waitingCount: entries.filter((e) => e.status === 'waiting').length,
-      completedCount: entries.filter((e) => e.status === 'completed').length,
-      totalCount: entries.length,
+      waitingCount,
+      completedCount,
+      totalCount,
     };
   },
 };

@@ -60,9 +60,6 @@ export default function StaffControls() {
   const [initialLoading, setInitialLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [showQR, setShowQR] = useState(false);
-  const [showPriorityForm, setShowPriorityForm] = useState(false);
-  const [priorityName, setPriorityName] = useState('');
-  const [priorityPhone, setPriorityPhone] = useState('');
   const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
   // Refs to avoid dependency cycles in callbacks
@@ -237,7 +234,11 @@ export default function StaffControls() {
       const data = await response.json();
 
       if (data.success) {
-        showNotif('success', `${action.charAt(0).toUpperCase() + action.slice(1)} successful`);
+        if (action === 'next' && data.isTerminated) {
+          showNotif('success', 'All patients have been visited! The queue is now terminated.');
+        } else {
+          showNotif('success', `${action.charAt(0).toUpperCase() + action.slice(1)} successful`);
+        }
         refreshDashboard();
       } else {
         showNotif('error', data.error || `Failed to ${action}`);
@@ -249,42 +250,18 @@ export default function StaffControls() {
     }
   };
 
-  const handlePrioritySubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!dashboard?.session?.id || !priorityName || !priorityPhone) return;
-
-    setActionLoading('priority');
-    try {
-      const response = await fetch('/api/queue/priority', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          sessionId: dashboard.session.id,
-          name: priorityName,
-          phone: priorityPhone,
-          consent: true,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        showNotif('success', `Priority patient added: Token #${data.tokenNumber}`);
-        setPriorityName('');
-        setPriorityPhone('');
-        setShowPriorityForm(false);
-        refreshDashboard();
-      } else {
-        showNotif('error', data.error || 'Failed to add priority patient');
-      }
-    } catch {
-      showNotif('error', 'Network error');
-    } finally {
-      setActionLoading(null);
-    }
-  };
-
   const selectedDoctor = doctors.find((d) => d.id === selectedDoctorId);
+
+  const allVisited = Boolean(
+    dashboard &&
+    dashboard.totalCount > 0 &&
+    dashboard.waitingCount === 0 &&
+    !dashboard.entries.some((e) => e.status === 'called')
+  );
+
+  const isTerminated = Boolean(
+    dashboard && (dashboard.session.status === 'closed' || allVisited)
+  );
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -396,9 +373,14 @@ export default function StaffControls() {
               <span className="stat-label">Total</span>
               <span className="stat-value">{dashboard.totalCount}</span>
             </div>
-            <div className={`stat-card stat-status queue-${dashboard.session.status}`}>
+            <div className={`stat-card stat-status queue-${isTerminated ? 'closed' : dashboard.session.status}`}>
               <span className="stat-label">Queue Status</span>
-              <span className="stat-value capitalize">{dashboard.session.status}</span>
+              <span className="stat-value capitalize">{isTerminated ? 'Terminated' : dashboard.session.status}</span>
+              {isTerminated && (
+                <span style={{ fontSize: '12px', color: '#16a34a', fontWeight: 600, display: 'block', marginTop: '2px' }}>
+                  All patients visited
+                </span>
+              )}
             </div>
           </div>
 
@@ -406,19 +388,26 @@ export default function StaffControls() {
           <div className="action-buttons">
             <button
               onClick={() => performAction('next')}
-              disabled={actionLoading !== null || dashboard.session.status !== 'open'}
+              disabled={actionLoading !== null || isTerminated || dashboard.session.status !== 'open'}
               className="btn btn-primary btn-action"
             >
-              {actionLoading === 'next' ? <span className="spinner-sm" /> : (
+              {actionLoading === 'next' ? (
+                <span className="spinner-sm" />
+              ) : isTerminated ? (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                  <polyline points="22 4 12 14.01 9 11.01" />
+                </svg>
+              ) : (
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20">
                   <polygon points="5 4 15 12 5 20 5 4" />
                   <line x1="19" y1="5" x2="19" y2="19" />
                 </svg>
               )}
-              Next Patient
+              {isTerminated ? 'All Patients Visited' : 'Next Patient'}
             </button>
 
-            {dashboard.session.status === 'open' ? (
+            {!isTerminated && dashboard.session.status === 'open' ? (
               <button
                 onClick={() => performAction('pause')}
                 disabled={actionLoading !== null}
@@ -432,7 +421,7 @@ export default function StaffControls() {
                 )}
                 Pause Queue
               </button>
-            ) : dashboard.session.status === 'paused' ? (
+            ) : !isTerminated && dashboard.session.status === 'paused' ? (
               <button
                 onClick={() => performAction('resume')}
                 disabled={actionLoading !== null}
@@ -448,20 +437,6 @@ export default function StaffControls() {
             ) : null}
 
             <button
-              onClick={() => performAction('skip')}
-              disabled={actionLoading !== null || dashboard.session.status !== 'open'}
-              className="btn btn-secondary btn-action"
-            >
-              {actionLoading === 'skip' ? <span className="spinner-sm" /> : (
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20">
-                  <polygon points="5 4 15 12 5 20 5 4" />
-                  <polygon points="13 4 23 12 13 20 13 4" />
-                </svg>
-              )}
-              Skip
-            </button>
-
-            <button
               onClick={() => performAction('recall')}
               disabled={actionLoading !== null}
               className="btn btn-secondary btn-action"
@@ -474,74 +449,56 @@ export default function StaffControls() {
               )}
               Recall
             </button>
-
-            <button
-              onClick={() => setShowPriorityForm(!showPriorityForm)}
-              disabled={actionLoading !== null}
-              className="btn btn-accent btn-action"
-            >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20">
-                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-              </svg>
-              Priority
-            </button>
-
-            <button
-              onClick={() => {
-                if (confirm('Are you sure you want to reset the queue? This will cancel all waiting patients.')) {
-                  performAction('reset');
-                }
-              }}
-              disabled={actionLoading !== null}
-              className="btn btn-danger btn-action"
-            >
-              {actionLoading === 'reset' ? <span className="spinner-sm" /> : (
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20">
-                  <polyline points="23 4 23 10 17 10" />
-                  <polyline points="1 20 1 14 7 14" />
-                  <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
-                </svg>
-              )}
-              Reset
-            </button>
           </div>
-
-          {/* Priority Patient Form */}
-          {showPriorityForm && (
-            <form onSubmit={handlePrioritySubmit} className="priority-form glass-card">
-              <h4>Add Priority Patient</h4>
-              <div className="priority-fields">
-                <input
-                  type="text"
-                  placeholder="Patient Name"
-                  value={priorityName}
-                  onChange={(e) => setPriorityName(e.target.value)}
-                  className="form-input"
-                  required
-                />
-                <input
-                  type="tel"
-                  placeholder="Phone (10 digits)"
-                  value={priorityPhone}
-                  onChange={(e) => setPriorityPhone(e.target.value.replace(/[^\d]/g, '').slice(0, 10))}
-                  className="form-input"
-                  required
-                  inputMode="numeric"
-                />
-                <button
-                  type="submit"
-                  className="btn btn-primary btn-sm"
-                  disabled={actionLoading === 'priority'}
-                >
-                  {actionLoading === 'priority' ? <span className="spinner-sm" /> : 'Add'}
-                </button>
-              </div>
-            </form>
-          )}
 
           {/* Queue List */}
           <div className="queue-list-section">
             <h3 className="section-title">Patient Queue</h3>
+
+            {/* Terminated & All Patients Visited Alert */}
+            {isTerminated && dashboard.entries.length > 0 && (
+              <div
+                className="all-patients-visited-banner"
+                style={{
+                  background: 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)',
+                  border: '1px solid #86efac',
+                  borderRadius: '12px',
+                  padding: '16px 20px',
+                  marginBottom: '16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '14px',
+                  color: '#166534',
+                }}
+              >
+                <div
+                  style={{
+                    width: '36px',
+                    height: '36px',
+                    borderRadius: '50%',
+                    background: '#22c55e',
+                    color: 'white',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontWeight: 800,
+                    fontSize: '18px',
+                    flexShrink: 0,
+                  }}
+                >
+                  ✓
+                </div>
+                <div>
+                  <h4 style={{ margin: 0, fontSize: '15px', fontWeight: 700, color: '#14532d' }}>
+                    All Patients Have Been Visited
+                  </h4>
+                  <p style={{ margin: '2px 0 0', fontSize: '13px', color: '#166534' }}>
+                    The OPD queue has successfully completed and is automatically terminated.
+                  </p>
+                </div>
+              </div>
+            )}
+
             {dashboard.entries.length === 0 ? (
               <p className="empty-queue">No patients in queue yet.</p>
             ) : (

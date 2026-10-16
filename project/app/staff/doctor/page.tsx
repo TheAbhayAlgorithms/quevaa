@@ -339,23 +339,23 @@ export default function DoctorQueuePage() {
           >
             {actionLoading ? (
               <span className="spinner" />
+            ) : queueStatus === 'closed' || (totalTokens > 0 && waitingCount === 0 && currentToken === 0) ? (
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="28" height="28">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                <polyline points="22 4 12 14.01 9 11.01" />
+              </svg>
             ) : (
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="28" height="28">
                 <polygon points="5 4 15 12 5 20 5 4" />
                 <line x1="19" y1="5" x2="19" y2="19" />
               </svg>
             )}
-            Next Patient
+            {queueStatus === 'closed' || (totalTokens > 0 && waitingCount === 0 && currentToken === 0)
+              ? 'All Patients Visited'
+              : 'Next Patient'}
           </button>
 
           <div className="doctor-secondary-actions">
-            <button
-              onClick={() => handleAction('skip')}
-              disabled={actionLoading || queueStatus !== 'open'}
-              className="btn btn-secondary"
-            >
-              Skip
-            </button>
             <button
               onClick={() => handleAction('recall')}
               disabled={actionLoading || currentToken === 0}

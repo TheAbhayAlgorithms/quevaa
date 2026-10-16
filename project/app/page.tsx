@@ -21,11 +21,6 @@ export default function HomePage() {
             </div>
             <span className="nav-title">Quevaa</span>
           </div>
-          <div className="nav-links">
-            <Link href="/staff/login" className="btn btn-ghost btn-sm">
-              Staff Login
-            </Link>
-          </div>
         </div>
       </nav>
 
@@ -57,19 +52,12 @@ export default function HomePage() {
           </p>
 
           <div className="hero-actions">
-            <Link href="/check-in" className="btn btn-primary btn-lg">
+            <Link href="/staff/login" className="btn btn-primary btn-lg">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20">
-                <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
-                <line x1="12" y1="18" x2="12.01" y2="18" />
-              </svg>
-              Patient Check-In (OTP)
-            </Link>
-            <Link href="/staff/login" className="btn btn-glass btn-lg">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="18" height="18">
                 <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
                 <path d="M7 11V7a5 5 0 0 1 10 0v4" />
               </svg>
-              Staff Portal
+              Staff Login
             </Link>
           </div>
         </div>

@@ -18,6 +18,13 @@ export const metadata: Metadata = {
     description: 'Skip the chaos. Track your OPD queue in real-time.',
     type: 'website',
   },
+  icons: {
+    icon: [
+      { url: '/icon.svg', type: 'image/svg+xml' },
+      { url: '/favicon.ico', sizes: 'any' },
+    ],
+    apple: '/apple-icon.png',
+  },
 };
 
 export default function RootLayout({

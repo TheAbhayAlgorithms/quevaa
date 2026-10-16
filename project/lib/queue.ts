@@ -342,7 +342,28 @@ export async function advanceQueue(sessionId: string) {
       }
     }
 
-    return { newToken, sessionId };
+    let isTerminated = false;
+    const { count: remainingWaiting } = await supabase
+      .from('queue_entries')
+      .select('*', { count: 'exact', head: true })
+      .eq('session_id', sessionId)
+      .eq('status', 'waiting');
+
+    const { count: remainingCalled } = await supabase
+      .from('queue_entries')
+      .select('*', { count: 'exact', head: true })
+      .eq('session_id', sessionId)
+      .eq('status', 'called');
+
+    if ((remainingWaiting ?? 0) === 0 && (remainingCalled ?? 0) === 0) {
+      await supabase
+        .from('queue_sessions')
+        .update({ status: 'closed', updated_at: new Date().toISOString() })
+        .eq('id', sessionId);
+      isTerminated = true;
+    }
+
+    return { newToken, sessionId, isTerminated };
   } catch (err) {
     console.warn('Supabase advanceQueue warning, using mockStore fallback:', err);
     return mockStore.advanceQueue(sessionId);
@@ -580,14 +601,27 @@ export async function getStaffDashboardData(sessionId: string) {
         .order('token_number', { ascending: true });
 
       const allEntries = (entries || []) as (QueueEntry & { patient: Patient })[];
+      const waitingCount = allEntries.filter((e) => e.status === 'waiting').length;
+      const calledCount = allEntries.filter((e) => e.status === 'called').length;
+      const completedCount = allEntries.filter((e) => e.status === 'completed').length;
+      const totalCount = allEntries.length;
+
+      let currentSession = session as QueueSession & { doctor: Doctor };
+      if (totalCount > 0 && waitingCount === 0 && calledCount === 0 && currentSession.status !== 'closed') {
+        await supabase
+          .from('queue_sessions')
+          .update({ status: 'closed', updated_at: new Date().toISOString() })
+          .eq('id', sessionId);
+        currentSession = { ...currentSession, status: 'closed' };
+      }
 
       return {
-        session: session as QueueSession & { doctor: Doctor },
+        session: currentSession,
         doctor: (session as Record<string, unknown>).doctor as Doctor,
         entries: allEntries,
-        waitingCount: allEntries.filter((e) => e.status === 'waiting').length,
-        completedCount: allEntries.filter((e) => e.status === 'completed').length,
-        totalCount: allEntries.length,
+        waitingCount,
+        completedCount,
+        totalCount,
       };
     }
   } catch (err) {
