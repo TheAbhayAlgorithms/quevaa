@@ -3029,5 +3029,105 @@ a:hover {
   color: var(--gray-500);
 }
 
+/* ===========================================
+   Selected Doctor Active Card & Link System
+   =========================================== */
+.selected-doctor-active-card {
+  width: 100%;
+  padding: 16px 20px;
+  background: #ffffff;
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--border-radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  transition: all var(--transition-base);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.selected-doctor-active-card:hover {
+  border-color: var(--primary-400);
+  box-shadow: 0 4px 16px rgba(22, 163, 74, 0.08);
+}
+
+.active-card-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+  min-width: 0;
+}
+
+.active-card-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.active-card-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.active-card-name {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--gray-900);
+  letter-spacing: -0.2px;
+}
+
+.active-card-speciality {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--primary-700);
+  margin-top: 2px;
+}
+
+.active-card-description {
+  font-size: 12.5px;
+  color: var(--gray-500);
+  margin-top: 4px;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.4;
+}
+
+.active-card-actions {
+  flex-shrink: 0;
+}
+
+.select-doctor-empty {
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.doctor-directory-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--primary-400) !important;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08) !important;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalPop {
+  from {
+    opacity: 0;
+    transform: scale(0.94) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+
 
 

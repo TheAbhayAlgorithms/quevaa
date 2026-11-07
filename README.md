@@ -16,6 +16,7 @@ Hospital staff and doctors have dedicated real-time control panels to call patie
 | :--- | :--- | :--- |
 | **Landing Page** | [quevaa.vercel.app](https://quevaa.vercel.app) | Public homepage & hospital overview |
 | **Staff Portal Login** | [quevaa.vercel.app/staff/login](https://quevaa.vercel.app/staff/login) | Hospital staff & doctor authentication |
+| **Select Doctor & QR Portal** | [quevaa.vercel.app/staff/select-doctor](https://quevaa.vercel.app/staff/select-doctor) | Dedicated doctor directory, specialities & QR poster options |
 | **Staff Dashboard** | [quevaa.vercel.app/staff/dashboard](https://quevaa.vercel.app/staff/dashboard) | Full hospital queue management & QR printouts |
 | **Doctor Room View** | [quevaa.vercel.app/staff/doctor](https://quevaa.vercel.app/staff/doctor) | Minimal, distraction-free doctor consultation view |
 | **Sample QR Check-In** | [quevaa.vercel.app/check-in/d1000001-0000-0000-0000-000000000001](https://quevaa.vercel.app/check-in/d1000001-0000-0000-0000-000000000001) | Dr. Priya Sharma (General Medicine) |

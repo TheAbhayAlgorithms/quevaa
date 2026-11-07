@@ -4,7 +4,7 @@ import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { getSupabaseBrowserClient } from '@/lib/supabase-browser';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import DoctorSelect, { DoctorPortrait } from '@/components/DoctorSelect';
+import { DoctorPortrait } from '@/components/DoctorSelect';
 
 // ===========================================
 // Doctor Queue Page
@@ -99,7 +99,20 @@ export default function DoctorQueuePage() {
       if (data.success) {
         setDoctors(data.doctors);
         if (data.doctors.length > 0 && !selectedDoctorRef.current) {
-          setSelectedDoctorId(data.doctors[0].id);
+          let targetId = '';
+          if (typeof window !== 'undefined') {
+            const params = new URLSearchParams(window.location.search);
+            const urlDocId = params.get('doctorId');
+            if (urlDocId && data.doctors.some((d: Doctor) => d.id === urlDocId)) {
+              targetId = urlDocId;
+            } else {
+              const stored = localStorage.getItem('quevaa_selected_doctor_id');
+              if (stored && data.doctors.some((d: Doctor) => d.id === stored)) {
+                targetId = stored;
+              }
+            }
+          }
+          setSelectedDoctorId(targetId || data.doctors[0].id);
         }
         return data.doctors as Doctor[];
       }
@@ -284,17 +297,21 @@ export default function DoctorQueuePage() {
       )}
 
       <div className="dashboard-content">
-        {/* Doctor Selector */}
-        {doctors.length > 1 && (
-          <div className="doctor-select-wrapper" style={{ marginBottom: 24, maxWidth: 640, marginLeft: 'auto', marginRight: 'auto' }}>
-            <DoctorSelect
-              doctors={doctors as any}
-              selectedDoctorId={selectedDoctorId}
-              onSelectDoctor={(id) => setSelectedDoctorId(id)}
-              label="Select Doctor"
-            />
+        {/* Doctor Selection / Switch Option */}
+        <div style={{ maxWidth: 640, margin: '0 auto 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 18px', background: '#fff', borderRadius: '16px', border: '1.5px solid var(--gray-200)', flexWrap: 'wrap', gap: 10 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--gray-600)' }}>Active Doctor:</span>
+            <strong style={{ fontSize: '14px', color: 'var(--gray-900)' }}>{selectedDoctor?.name || 'Loading...'}</strong>
+            <span className="room-pill">Room {selectedDoctor?.room_number || 'N/A'}</span>
           </div>
-        )}
+          <Link
+            href="/staff/select-doctor"
+            className="btn btn-secondary btn-xs"
+            style={{ gap: 4 }}
+          >
+            Change Doctor / View All →
+          </Link>
+        </div>
 
         {/* Hero: Current Token */}
         <div className="doctor-queue-hero">

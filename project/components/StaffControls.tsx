@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useEffect, useState, useCallback, useRef } from 'react';
+import Link from 'next/link';
 import { getSupabaseBrowserClient } from '@/lib/supabase-browser';
 import QRCodeDisplay from './QRCodeDisplay';
-import DoctorSelect from './DoctorSelect';
+import { DoctorPortrait } from './DoctorSelect';
 
 // ===========================================
 // StaffControls Component
@@ -149,12 +150,34 @@ export default function StaffControls() {
     }, 300);
   }, [refreshDashboard]);
 
-  // Initial load: fetch doctors and select first one
+  // Initial load: fetch doctors and select target doctor
   useEffect(() => {
     const init = async () => {
       const docs = await fetchDoctors();
-      if (docs.length > 0 && !selectedDoctorRef.current) {
-        setSelectedDoctorId(docs[0].id);
+      if (typeof window !== 'undefined') {
+        const params = new URLSearchParams(window.location.search);
+        const urlDocId = params.get('doctorId');
+        const urlShowQR = params.get('showQR') === 'true';
+
+        let targetId = '';
+        if (urlDocId && docs.some((d) => d.id === urlDocId)) {
+          targetId = urlDocId;
+        } else {
+          const stored = localStorage.getItem('quevaa_selected_doctor_id');
+          if (stored && docs.some((d) => d.id === stored)) {
+            targetId = stored;
+          } else if (docs.length > 0) {
+            targetId = docs[0].id;
+          }
+        }
+
+        if (targetId) {
+          setSelectedDoctorId(targetId);
+          localStorage.setItem('quevaa_selected_doctor_id', targetId);
+        }
+        if (urlShowQR) {
+          setShowQR(true);
+        }
       }
       setInitialLoading(false);
     };
@@ -164,6 +187,9 @@ export default function StaffControls() {
   // Re-fetch dashboard when selected doctor changes
   useEffect(() => {
     if (selectedDoctorId) {
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('quevaa_selected_doctor_id', selectedDoctorId);
+      }
       setInitialLoading(!hasFetchedOnce.current);
       refreshDashboard();
     }
@@ -289,18 +315,81 @@ export default function StaffControls() {
         </div>
       )}
 
-      {/* Doctor Selector */}
+      {/* Doctor Selection Area */}
       <div className="staff-header">
         <div className="doctor-select-wrapper">
-          <DoctorSelect
-            doctors={doctors as any}
-            selectedDoctorId={selectedDoctorId}
-            onSelectDoctor={(docId) => setSelectedDoctorId(docId)}
-            label="Select Doctor"
-          />
+          <label className="form-label" style={{ marginBottom: '8px' }}>
+            Select Doctor
+          </label>
+          {selectedDoctor ? (
+            <div className="selected-doctor-active-card">
+              <div className="active-card-content">
+                <DoctorPortrait
+                  name={selectedDoctor.name}
+                  imageUrl={selectedDoctor.image_url}
+                  department={selectedDoctor.department}
+                  size={54}
+                />
+                <div className="active-card-info">
+                  <div className="active-card-title-row">
+                    <span className="active-card-name">{selectedDoctor.name}</span>
+                    <span className="dept-pill" style={{ background: 'var(--primary-50)', color: 'var(--primary-700)', borderColor: 'var(--primary-200)' }}>
+                      {selectedDoctor.department || 'General'}
+                    </span>
+                    <span className="room-pill">Room {selectedDoctor.room_number || 'N/A'}</span>
+                  </div>
+                  <div className="active-card-speciality">
+                    {selectedDoctor.specialization || 'Clinical Specialist'}
+                  </div>
+                  {selectedDoctor.description && (
+                    <p className="active-card-description">{selectedDoctor.description}</p>
+                  )}
+                </div>
+              </div>
+
+              <div className="active-card-actions">
+                <Link
+                  href="/staff/select-doctor"
+                  className="btn btn-primary btn-sm"
+                  style={{ gap: 6, whiteSpace: 'nowrap' }}
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                  </svg>
+                  Select / Change Doctor
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <Link
+              href="/staff/select-doctor"
+              className="selected-doctor-active-card select-doctor-empty"
+            >
+              <div className="active-card-content">
+                <div className="doctor-portrait-frame" style={{ width: 54, height: 54, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--primary-50)', color: 'var(--primary-700)' }}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="24" height="24">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                    <circle cx="8.5" cy="7" r="4" />
+                    <line x1="20" y1="8" x2="20" y2="14" />
+                    <line x1="23" y1="11" x2="17" y2="11" />
+                  </svg>
+                </div>
+                <div>
+                  <h4 style={{ margin: 0, fontSize: 16 }}>Choose a Doctor</h4>
+                  <p style={{ margin: '2px 0 0', fontSize: 13, color: 'var(--gray-500)' }}>
+                    Click here to open the full doctor directory & select a specialist
+                  </p>
+                </div>
+              </div>
+              <span className="btn btn-primary btn-sm">
+                Browse Doctors →
+              </span>
+            </Link>
+          )}
         </div>
 
-        <div className="staff-header-actions" style={{ alignSelf: 'flex-start', marginTop: '28px' }}>
+        <div className="staff-header-actions" style={{ alignSelf: 'flex-start', marginTop: '30px' }}>
           <button
             onClick={() => setShowQR(!showQR)}
             className="btn btn-secondary btn-sm"
