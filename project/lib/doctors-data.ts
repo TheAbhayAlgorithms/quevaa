@@ -167,3 +167,4 @@ export function enrichDoctorProfile<T extends { id: string; name: string }>(
     image_url: (doctor as unknown as { image_url?: string }).image_url || match?.image_url || fallback.image_url,
   };
 }
+

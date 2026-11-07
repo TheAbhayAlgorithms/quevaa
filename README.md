@@ -21,6 +21,11 @@ Hospital staff and doctors have dedicated real-time control panels to call patie
 | **Sample QR Check-In** | [quevaa.vercel.app/check-in/d1000001-0000-0000-0000-000000000001](https://quevaa.vercel.app/check-in/d1000001-0000-0000-0000-000000000001) | Dr. Priya Sharma (General Medicine) |
 | **Sample QR Check-In** | [quevaa.vercel.app/check-in/d1000001-0000-0000-0000-000000000002](https://quevaa.vercel.app/check-in/d1000001-0000-0000-0000-000000000002) | Dr. Rajesh Patel (Orthopedics) |
 | **Sample QR Check-In** | [quevaa.vercel.app/check-in/d1000001-0000-0000-0000-000000000003](https://quevaa.vercel.app/check-in/d1000001-0000-0000-0000-000000000003) | Dr. Ananya Gupta (Pediatrics) |
+| **Sample QR Check-In** | [quevaa.vercel.app/check-in/d1000001-0000-0000-0000-000000000004](https://quevaa.vercel.app/check-in/d1000001-0000-0000-0000-000000000004) | Dr. Vikram Malhotra (Cardiology) |
+| **Sample QR Check-In** | [quevaa.vercel.app/check-in/d1000001-0000-0000-0000-000000000005](https://quevaa.vercel.app/check-in/d1000001-0000-0000-0000-000000000005) | Dr. Sunita Rao (Dermatology) |
+| **Sample QR Check-In** | [quevaa.vercel.app/check-in/d1000001-0000-0000-0000-000000000006](https://quevaa.vercel.app/check-in/d1000001-0000-0000-0000-000000000006) | Dr. Arvind Swaminathan (Neurology) |
+| **Sample QR Check-In** | [quevaa.vercel.app/check-in/d1000001-0000-0000-0000-000000000007](https://quevaa.vercel.app/check-in/d1000001-0000-0000-0000-000000000007) | Dr. Meera Nambiar (Gynecology & Obstetrics) |
+| **Sample QR Check-In** | [quevaa.vercel.app/check-in/d1000001-0000-0000-0000-000000000008](https://quevaa.vercel.app/check-in/d1000001-0000-0000-0000-000000000008) | Dr. Rohan Das (ENT - Otolaryngology) |
 | **Live Queue Tracker** | [quevaa.vercel.app/track?id={trackingToken}](https://quevaa.vercel.app/track) | Real-time live status for patients |
 
 ---
