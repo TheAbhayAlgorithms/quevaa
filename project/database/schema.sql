@@ -39,6 +39,8 @@ create table doctors (
   department text,
   room_number text,
   specialization text,
+  description text,
+  image_url text,
   avg_consultation_minutes integer default 10,
   is_active boolean default true,
   created_at timestamptz default now()

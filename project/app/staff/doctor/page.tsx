@@ -4,6 +4,7 @@ import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { getSupabaseBrowserClient } from '@/lib/supabase-browser';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import DoctorSelect, { DoctorPortrait } from '@/components/DoctorSelect';
 
 // ===========================================
 // Doctor Queue Page
@@ -15,6 +16,10 @@ interface Doctor {
   name: string;
   department: string | null;
   room_number: string | null;
+  specialization?: string | null;
+  description?: string | null;
+  image_url?: string | null;
+  avg_consultation_minutes?: number;
   todaySession: {
     id: string;
     current_token: number;
@@ -281,28 +286,34 @@ export default function DoctorQueuePage() {
       <div className="dashboard-content">
         {/* Doctor Selector */}
         {doctors.length > 1 && (
-          <div className="doctor-select-wrapper" style={{ marginBottom: 24, maxWidth: 400 }}>
-            <label htmlFor="doc-select" className="form-label">Select Doctor</label>
-            <select
-              id="doc-select"
-              className="form-select"
-              value={selectedDoctorId}
-              onChange={(e) => setSelectedDoctorId(e.target.value)}
-            >
-              {doctors.map((d) => (
-                <option key={d.id} value={d.id}>
-                  {d.name} — {d.department || 'General'}
-                </option>
-              ))}
-            </select>
+          <div className="doctor-select-wrapper" style={{ marginBottom: 24, maxWidth: 640, marginLeft: 'auto', marginRight: 'auto' }}>
+            <DoctorSelect
+              doctors={doctors as any}
+              selectedDoctorId={selectedDoctorId}
+              onSelectDoctor={(id) => setSelectedDoctorId(id)}
+              label="Select Doctor"
+            />
           </div>
         )}
 
         {/* Hero: Current Token */}
         <div className="doctor-queue-hero">
-          <div className="doctor-queue-info">
-            <h2>{selectedDoctor?.name}</h2>
-            <p>{selectedDoctor?.department} · Room {selectedDoctor?.room_number || 'N/A'}</p>
+          <div className="doctor-queue-info" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14 }}>
+            {selectedDoctor && (
+              <DoctorPortrait
+                name={selectedDoctor.name}
+                imageUrl={selectedDoctor.image_url}
+                department={selectedDoctor.department}
+                size={52}
+              />
+            )}
+            <div style={{ textAlign: 'left' }}>
+              <h2 style={{ margin: 0, fontSize: '20px' }}>{selectedDoctor?.name}</h2>
+              <p style={{ margin: '3px 0 0 0', fontSize: '13px', color: 'var(--gray-600)' }}>
+                {selectedDoctor?.department} · Room {selectedDoctor?.room_number || 'N/A'}
+                {selectedDoctor?.specialization && ` · ${selectedDoctor.specialization}`}
+              </p>
+            </div>
           </div>
 
           <div className="doctor-queue-current">

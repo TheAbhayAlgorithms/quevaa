@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { getSupabaseBrowserClient } from '@/lib/supabase-browser';
 import QRCodeDisplay from './QRCodeDisplay';
+import DoctorSelect from './DoctorSelect';
 
 // ===========================================
 // StaffControls Component
@@ -14,6 +15,12 @@ interface Doctor {
   name: string;
   department: string | null;
   room_number: string | null;
+  specialization?: string | null;
+  description?: string | null;
+  image_url?: string | null;
+  hospital_id?: string;
+  is_active?: boolean;
+  created_at?: string;
   avg_consultation_minutes: number;
   todaySession: {
     id: string;
@@ -285,24 +292,15 @@ export default function StaffControls() {
       {/* Doctor Selector */}
       <div className="staff-header">
         <div className="doctor-select-wrapper">
-          <label htmlFor="doctor-select" className="form-label">
-            Select Doctor
-          </label>
-          <select
-            id="doctor-select"
-            className="form-select"
-            value={selectedDoctorId}
-            onChange={(e) => setSelectedDoctorId(e.target.value)}
-          >
-            {doctors.map((doc) => (
-              <option key={doc.id} value={doc.id}>
-                {doc.name} — {doc.department || 'General'} (Room {doc.room_number || 'N/A'})
-              </option>
-            ))}
-          </select>
+          <DoctorSelect
+            doctors={doctors as any}
+            selectedDoctorId={selectedDoctorId}
+            onSelectDoctor={(docId) => setSelectedDoctorId(docId)}
+            label="Select Doctor"
+          />
         </div>
 
-        <div className="staff-header-actions">
+        <div className="staff-header-actions" style={{ alignSelf: 'flex-start', marginTop: '28px' }}>
           <button
             onClick={() => setShowQR(!showQR)}
             className="btn btn-secondary btn-sm"

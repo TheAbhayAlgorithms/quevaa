@@ -6,6 +6,7 @@
 
 import { nanoid } from 'nanoid';
 import type { Doctor, QueueSession, Patient, QueueEntry } from '@/types/database';
+import { ALL_DOCTORS_DIRECTORY } from './doctors-data';
 
 export const MOCK_HOSPITAL = {
   id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
@@ -14,41 +15,11 @@ export const MOCK_HOSPITAL = {
   phone: '+91-11-2345-6789',
 };
 
-export const MOCK_DOCTORS: (Doctor & { todaySession?: QueueSession | null })[] = [
-  {
-    id: 'd1000001-0000-0000-0000-000000000001',
+export const MOCK_DOCTORS: (Doctor & { todaySession?: QueueSession | null })[] =
+  ALL_DOCTORS_DIRECTORY.map((doc) => ({
+    ...doc,
     hospital_id: MOCK_HOSPITAL.id,
-    name: 'Dr. Priya Sharma',
-    department: 'General Medicine',
-    room_number: '101',
-    specialization: 'Internal Medicine',
-    avg_consultation_minutes: 8,
-    is_active: true,
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: 'd1000001-0000-0000-0000-000000000002',
-    hospital_id: MOCK_HOSPITAL.id,
-    name: 'Dr. Rajesh Patel',
-    department: 'Orthopedics',
-    room_number: '205',
-    specialization: 'Joint & Bone Specialist',
-    avg_consultation_minutes: 12,
-    is_active: true,
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: 'd1000001-0000-0000-0000-000000000003',
-    hospital_id: MOCK_HOSPITAL.id,
-    name: 'Dr. Ananya Gupta',
-    department: 'Pediatrics',
-    room_number: '310',
-    specialization: 'Child Healthcare',
-    avg_consultation_minutes: 10,
-    is_active: true,
-    created_at: new Date().toISOString(),
-  },
-];
+  }));
 
 // Global state in memory for mock operations
 const today = new Date().toISOString().split('T')[0];

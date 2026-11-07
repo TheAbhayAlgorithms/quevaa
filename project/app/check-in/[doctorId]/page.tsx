@@ -110,6 +110,9 @@ export default async function CheckInPage({ params }: CheckInPageProps) {
           doctorName={doctor.name}
           department={doctor.department || 'General'}
           roomNumber={doctor.room_number || 'N/A'}
+          specialization={doctor.specialization || undefined}
+          description={doctor.description || undefined}
+          imageUrl={doctor.image_url || undefined}
         />
       </div>
     </div>

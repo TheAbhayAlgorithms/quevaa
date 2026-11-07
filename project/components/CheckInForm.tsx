@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
+import { DoctorPortrait } from './DoctorSelect';
 
 // ===========================================
 // CheckInForm Component
@@ -13,6 +14,9 @@ interface CheckInFormProps {
   doctorName: string;
   department: string;
   roomNumber: string;
+  specialization?: string;
+  description?: string;
+  imageUrl?: string;
 }
 
 interface CheckInSuccess {
@@ -37,6 +41,9 @@ export default function CheckInForm({
   doctorName,
   department,
   roomNumber,
+  specialization,
+  description,
+  imageUrl,
 }: CheckInFormProps) {
   // Step state: 'details' | 'otp'
   const [step, setStep] = useState<'details' | 'otp'>('details');
@@ -332,16 +339,19 @@ export default function CheckInForm({
     return (
       <form onSubmit={handleVerifyAndJoin} className="check-in-form otp-step-form" noValidate>
         {/* Doctor Summary Banner */}
-        <div className="doctor-info-banner">
-          <div className="doctor-avatar">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="26" height="26">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-              <circle cx="12" cy="7" r="4" />
-            </svg>
-          </div>
-          <div>
-            <h3 className="doctor-name">{doctorName}</h3>
-            <p className="doctor-dept">{department} · Room {roomNumber}</p>
+        <div className="doctor-info-banner" style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+          <DoctorPortrait
+            name={doctorName}
+            imageUrl={imageUrl}
+            department={department}
+            size={52}
+          />
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <h3 className="doctor-name" style={{ margin: 0 }}>{doctorName}</h3>
+            <p className="doctor-dept" style={{ margin: '2px 0 0 0' }}>
+              {department} · Room {roomNumber}
+              {specialization && ` · ${specialization}`}
+            </p>
           </div>
         </div>
 
@@ -483,16 +493,24 @@ export default function CheckInForm({
   return (
     <form onSubmit={handleSendOtp} className="check-in-form" noValidate>
       {/* Doctor Summary Banner */}
-      <div className="doctor-info-banner">
-        <div className="doctor-avatar">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="28" height="28">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-            <circle cx="12" cy="7" r="4" />
-          </svg>
-        </div>
-        <div>
-          <h3 className="doctor-name">{doctorName}</h3>
-          <p className="doctor-dept">{department} · Room {roomNumber}</p>
+      <div className="doctor-info-banner" style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+        <DoctorPortrait
+          name={doctorName}
+          imageUrl={imageUrl}
+          department={department}
+          size={56}
+        />
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <h3 className="doctor-name" style={{ margin: 0 }}>{doctorName}</h3>
+          <p className="doctor-dept" style={{ margin: '2px 0 0 0' }}>
+            {department} · Room {roomNumber}
+            {specialization && ` · ${specialization}`}
+          </p>
+          {description && (
+            <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: 'var(--gray-600)', lineHeight: '1.4' }}>
+              {description}
+            </p>
+          )}
         </div>
       </div>
 

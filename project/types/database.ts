@@ -21,6 +21,8 @@ export interface Doctor {
   avg_consultation_minutes: number;
   is_active: boolean;
   created_at: string;
+  description?: string | null;
+  image_url?: string | null;
 }
 
 export interface QueueSession {
