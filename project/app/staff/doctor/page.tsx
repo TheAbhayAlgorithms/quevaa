@@ -279,6 +279,13 @@ export default function DoctorQueuePage() {
             <span className="nav-subtitle">Doctor View</span>
           </div>
           <div className="nav-right">
+            <Link href="/staff/select-doctor" className="btn btn-secondary btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+              Select Doctor
+            </Link>
             <Link href="/staff/dashboard" className="btn btn-ghost btn-sm">
               Full Dashboard
             </Link>

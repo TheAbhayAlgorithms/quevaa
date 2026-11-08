@@ -29,7 +29,9 @@ export default function SelectDoctorPage() {
   const [qrDataUrl, setQrDataUrl] = useState<string>('');
   const [copySuccess, setCopySuccess] = useState(false);
 
-  // Auth check (allow staff or guests to view)
+  // Authentication gating
+  const [authenticated, setAuthenticated] = useState(false);
+  const [authChecking, setAuthChecking] = useState(true);
   const [staffEmail, setStaffEmail] = useState<string>('');
 
   useEffect(() => {
@@ -37,25 +39,45 @@ export default function SelectDoctorPage() {
       try {
         const supabase = getSupabaseBrowserClient();
         const { data: { session } } = await supabase.auth.getSession();
-        if (session?.user?.email) {
-          setStaffEmail(session.user.email);
+        if (session?.user) {
+          setAuthenticated(true);
+          setStaffEmail(session.user.email || 'Staff');
+          setAuthChecking(false);
+          return;
         }
       } catch {
-        // Ignore
+        // Ignore Supabase error and check mock session
       }
 
       const mock = localStorage.getItem('quevaa_mock_staff');
       if (mock) {
         try {
           const parsed = JSON.parse(mock);
-          if (parsed.email) setStaffEmail(parsed.email);
+          setAuthenticated(true);
+          setStaffEmail(parsed.email || 'Staff');
+          setAuthChecking(false);
+          return;
         } catch {
-          // Ignore
+          router.push('/staff/login');
         }
+      } else {
+        router.push('/staff/login');
       }
+      setAuthChecking(false);
     };
     checkAuth();
-  }, []);
+  }, [router]);
+
+  const handleLogout = async () => {
+    try {
+      const supabase = getSupabaseBrowserClient();
+      await supabase.auth.signOut();
+    } catch {
+      // Ignore
+    }
+    localStorage.removeItem('quevaa_mock_staff');
+    router.push('/staff/login');
+  };
 
   // Fetch doctors and live sessions
   useEffect(() => {
@@ -198,13 +220,26 @@ export default function SelectDoctorPage() {
     router.push(`/staff/doctor?doctorId=${doctorId}`);
   };
 
+  if (authChecking) {
+    return (
+      <div className="page-container">
+        <div className="queue-status-loading">
+          <div className="pulse-ring" />
+          <p>Verifying authentication...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!authenticated) return null;
+
   return (
     <div className="page-container select-doctor-page" style={{ minHeight: '100vh', background: 'var(--gray-50)' }}>
       {/* Navigation Bar */}
       <nav className="dashboard-nav">
         <div className="nav-container">
           <div className="nav-brand">
-            <Link href="/" className="nav-brand-link">
+            <Link href="/staff/dashboard" className="nav-brand-link">
               <div className="nav-logo">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="24" height="24">
                   <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
@@ -215,17 +250,25 @@ export default function SelectDoctorPage() {
             <span className="nav-badge">Select Doctor</span>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+            {staffEmail && (
+              <span style={{ fontSize: '13px', color: 'var(--gray-600)', fontWeight: 500 }}>
+                {staffEmail}
+              </span>
+            )}
             <Link href="/staff/dashboard" className="btn btn-secondary btn-sm">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
                 <line x1="19" y1="12" x2="5" y2="12" />
                 <polyline points="12 19 5 12 12 5" />
               </svg>
-              Back to Dashboard
+              Dashboard
             </Link>
             <Link href="/staff/doctor" className="btn btn-ghost btn-sm">
               Doctor Room View
             </Link>
+            <button onClick={handleLogout} className="btn btn-ghost btn-sm" title="Log out">
+              Log Out
+            </button>
           </div>
         </div>
       </nav>
