@@ -31,7 +31,7 @@ export const ALL_DOCTORS_DIRECTORY: DoctorProfile[] = [
     description:
       'Senior Consultant in Internal Medicine with 14+ years of clinical practice managing chronic adult conditions, metabolic disorders, hypertension, and preventive primary care.',
     image_url:
-      'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=400&q=80',
+      'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=800&q=80',
     is_active: true,
     created_at: '2026-01-01T00:00:00.000Z',
   },
@@ -46,7 +46,7 @@ export const ALL_DOCTORS_DIRECTORY: DoctorProfile[] = [
     description:
       'Orthopedic & Joint Surgeon with extensive expertise in complex trauma management, sports injuries, knee & hip arthritis care, and spine mobility rehabilitation.',
     image_url:
-      'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=400&q=80',
+      'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=800&q=80',
     is_active: true,
     created_at: '2026-01-01T00:00:00.000Z',
   },
@@ -61,7 +61,7 @@ export const ALL_DOCTORS_DIRECTORY: DoctorProfile[] = [
     description:
       'Dedicated Pediatrician committed to gentle child healthcare, routine immunizations, developmental milestones, pediatric infectious diseases, and newborn wellness.',
     image_url:
-      'https://images.unsplash.com/photo-1594824813973-8b8981c2f213?auto=format&fit=crop&w=400&q=80',
+      'https://images.unsplash.com/photo-1594824813973-8b8981c2f213?auto=format&fit=crop&w=800&q=80',
     is_active: true,
     created_at: '2026-01-01T00:00:00.000Z',
   },
@@ -76,7 +76,7 @@ export const ALL_DOCTORS_DIRECTORY: DoctorProfile[] = [
     description:
       'Senior Interventional Cardiologist specializing in coronary artery disorders, heart failure management, arrhythmia screening, Echo/ECG diagnostics, and cardiovascular prevention.',
     image_url:
-      'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=400&q=80',
+      'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=800&q=80',
     is_active: true,
     created_at: '2026-01-01T00:00:00.000Z',
   },
@@ -91,7 +91,7 @@ export const ALL_DOCTORS_DIRECTORY: DoctorProfile[] = [
     description:
       'Consultant Dermatologist with specialized training in clinical dermatology, stubborn acne management, eczema, psoriasis, autoimmune skin disorders, and hair restoration therapies.',
     image_url:
-      'https://images.unsplash.com/photo-1551601651-2a8555f1a136?auto=format&fit=crop&w=400&q=80',
+      'https://images.unsplash.com/photo-1551601651-2a8555f1a136?auto=format&fit=crop&w=800&q=80',
     is_active: true,
     created_at: '2026-01-01T00:00:00.000Z',
   },
@@ -106,7 +106,7 @@ export const ALL_DOCTORS_DIRECTORY: DoctorProfile[] = [
     description:
       'Distinguished Neurologist with 16+ years of hospital experience treating chronic migraines, neuropathies, stroke recovery, epilepsy syndromes, Parkinson’s, and neuromuscular diseases.',
     image_url:
-      'https://images.unsplash.com/photo-1537368910025-700350fe46c7?auto=format&fit=crop&w=400&q=80',
+      'https://images.unsplash.com/photo-1537368910025-700350fe46c7?auto=format&fit=crop&w=800&q=80',
     is_active: true,
     created_at: '2026-01-01T00:00:00.000Z',
   },
@@ -121,7 +121,7 @@ export const ALL_DOCTORS_DIRECTORY: DoctorProfile[] = [
     description:
       'Consultant Obstetrician & Gynecologist dedicated to high-risk pregnancy monitoring, adolescent gynecological wellness, PCOS/PCOD therapy, and comprehensive maternal care.',
     image_url:
-      'https://images.unsplash.com/photo-1527613426441-4da17471b66d?auto=format&fit=crop&w=400&q=80',
+      'https://images.unsplash.com/photo-1527613426441-4da17471b66d?auto=format&fit=crop&w=800&q=80',
     is_active: true,
     created_at: '2026-01-01T00:00:00.000Z',
   },
@@ -136,7 +136,7 @@ export const ALL_DOCTORS_DIRECTORY: DoctorProfile[] = [
     description:
       'Senior ENT Surgeon providing diagnostic endoscopy for chronic sinusitis, allergic rhinitis, vertigo, hearing loss, pediatric adenoids, and throat infections.',
     image_url:
-      'https://images.unsplash.com/photo-1582750433449-648ed127bb54?auto=format&fit=crop&w=400&q=80',
+      'https://images.unsplash.com/photo-1582750433449-648ed127bb54?auto=format&fit=crop&w=800&q=80',
     is_active: true,
     created_at: '2026-01-01T00:00:00.000Z',
   },

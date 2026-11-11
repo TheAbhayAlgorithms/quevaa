@@ -338,14 +338,13 @@ export default function SelectDoctorPage() {
           </div>
 
           {/* Department Filter Chips */}
-          <div className="dept-filter-chips">
+          <div className="dept-filter-chips" style={{ padding: '4px 0 2px', display: 'flex', gap: '8px', overflowX: 'auto' }}>
             {departments.map((dept) => (
               <button
                 key={dept}
                 type="button"
                 onClick={() => setSelectedDeptFilter(dept)}
                 className={`dept-chip ${selectedDeptFilter === dept ? 'dept-chip-active' : ''}`}
-                style={{ padding: '6px 14px', fontSize: '13px' }}
               >
                 {dept}
               </button>
@@ -374,113 +373,74 @@ export default function SelectDoctorPage() {
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
-              gap: '22px',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+              gap: '24px',
             }}
           >
             {filteredDoctors.map((doc) => (
               <div
                 key={doc.id}
-                className="glass-card doctor-directory-card"
-                style={{
-                  padding: '24px',
-                  borderRadius: '20px',
-                  border: '1.5px solid var(--gray-200)',
-                  background: '#ffffff',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                  boxShadow: '0 4px 16px rgba(0,0,0,0.04)',
-                  transition: 'all var(--transition-base)',
-                }}
+                className="doctor-showcase-card"
+                onClick={() => handleSelectDoctor(doc)}
               >
-                {/* Doctor Bio Header */}
-                <div>
-                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16, marginBottom: 14 }}>
-                    <DoctorPortrait
-                      name={doc.name}
-                      imageUrl={doc.image_url}
-                      department={doc.department}
-                      size={68}
+                {/* Full-bleed Photo Background with Dark Scrim */}
+                <div className="doctor-showcase-bg-wrapper">
+                  {doc.image_url ? (
+                    <img
+                      src={doc.image_url}
+                      alt={doc.name}
+                      className="doctor-showcase-bg"
+                      loading="lazy"
                     />
-
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                        <h3 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--gray-900)', margin: 0 }}>
-                          {doc.name}
-                        </h3>
-                        <span className="room-pill">
-                          Room {doc.room_number}
-                        </span>
-                      </div>
-
-                      <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--primary-700)', marginTop: 4 }}>
-                        {doc.specialization}
-                      </div>
-
-                      <span
-                        className="dept-pill"
-                        style={{
-                          display: 'inline-block',
-                          marginTop: 6,
-                          fontSize: '11px',
-                          background: 'var(--gray-100)',
-                          color: 'var(--gray-700)',
-                        }}
-                      >
-                        {doc.department}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Description */}
-                  <p
-                    style={{
-                      fontSize: '13px',
-                      color: 'var(--gray-600)',
-                      lineHeight: 1.6,
-                      margin: '12px 0 16px',
-                    }}
-                  >
-                    {doc.description}
-                  </p>
+                  ) : (
+                    <div className="doctor-showcase-bg" />
+                  )}
+                  <div className="doctor-showcase-scrim" />
                 </div>
 
-                {/* Footer Info & Actions */}
-                <div style={{ paddingTop: 16, borderTop: '1px dashed var(--gray-200)' }}>
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      fontSize: '12px',
-                      marginBottom: 14,
-                    }}
-                  >
-                    <span style={{ color: 'var(--gray-500)', fontWeight: 500 }}>
-                      ⏱ ~{doc.avg_consultation_minutes} min consultation
-                    </span>
+                {/* Top Badges (Department Pill like WEDDINGS in Image 1 + Room Pill) */}
+                <div className="doctor-showcase-top">
+                  <span className="showcase-dept-pill">
+                    {doc.department || 'GENERAL'}
+                  </span>
+                  <span className="showcase-room-pill">
+                    <span className="showcase-room-dot" />
+                    Room {doc.room_number || 'N/A'}
+                  </span>
+                </div>
 
+                {/* Bottom Content Over Image */}
+                <div className="doctor-showcase-bottom">
+                  <h3 className="showcase-title">{doc.name}</h3>
+                  <p className="showcase-subtitle">{doc.specialization || 'Clinical Specialist'}</p>
+
+                  {doc.description && (
+                    <p className="showcase-bio">{doc.description}</p>
+                  )}
+
+                  <div className="showcase-meta-row">
+                    <span className="showcase-meta-tag">
+                      ⏱ ~{doc.avg_consultation_minutes}m visit
+                    </span>
                     {doc.todaySession ? (
-                      <span style={{ color: 'var(--primary-700)', fontWeight: 700 }}>
-                        Now: #{doc.todaySession.current_token || 0} · Total {doc.todaySession.total_tokens || 0}
+                      <span className="showcase-meta-tag" style={{ color: '#86efac' }}>
+                        Token #{doc.todaySession.current_token || 0} / {doc.todaySession.total_tokens || 0}
                       </span>
                     ) : (
-                      <span style={{ color: 'var(--gray-400)', fontWeight: 500 }}>
-                        ● Queue Open
+                      <span className="showcase-meta-tag" style={{ color: '#86efac' }}>
+                        ● Available Today
                       </span>
                     )}
                   </div>
 
-                  {/* Primary Trigger: Select & Get QR Code */}
-                  <div style={{ display: 'flex', gap: 10 }}>
+                  {/* Actions Bar */}
+                  <div className="showcase-actions-bar" onClick={(e) => e.stopPropagation()}>
                     <button
                       type="button"
                       onClick={() => handleSelectDoctor(doc)}
-                      className="btn btn-primary btn-sm"
-                      style={{ flex: 1, justifyContent: 'center', gap: 6 }}
+                      className="btn-showcase-primary"
                     >
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" width="16" height="16">
                         <rect x="3" y="3" width="7" height="7" />
                         <rect x="14" y="3" width="7" height="7" />
                         <rect x="14" y="14" width="7" height="7" />
@@ -495,8 +455,8 @@ export default function SelectDoctorPage() {
                         localStorage.setItem('quevaa_selected_doctor_id', doc.id);
                         handleProceedToDashboard(doc.id);
                       }}
-                      className="btn btn-secondary btn-sm"
-                      title="Directly manage this doctor's queue"
+                      className="btn-showcase-glass"
+                      title="Directly manage this doctor's queue on dashboard"
                     >
                       Dashboard →
                     </button>
