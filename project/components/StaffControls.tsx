@@ -4,7 +4,6 @@ import React, { useEffect, useState, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import { getSupabaseBrowserClient } from '@/lib/supabase-browser';
 import QRCodeDisplay from './QRCodeDisplay';
-import { DoctorPortrait } from './DoctorSelect';
 
 // ===========================================
 // StaffControls Component
@@ -324,13 +323,7 @@ export default function StaffControls() {
           {selectedDoctor ? (
             <div className="selected-doctor-active-card">
               <div className="active-card-content">
-                <DoctorPortrait
-                  name={selectedDoctor.name}
-                  imageUrl={selectedDoctor.image_url}
-                  department={selectedDoctor.department}
-                  size={54}
-                />
-                <div className="active-card-info">
+                <div className="active-card-info" style={{ width: '100%' }}>
                   <div className="active-card-title-row">
                     <span className="active-card-name">{selectedDoctor.name}</span>
                     <span className="dept-pill" style={{ background: 'var(--primary-50)', color: 'var(--primary-700)', borderColor: 'var(--primary-200)' }}>

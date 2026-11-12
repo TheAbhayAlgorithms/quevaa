@@ -47,7 +47,7 @@ function getDepartmentTheme(dept: string | null = '') {
   return { bg: '#f0fdf4', text: '#15803d', border: '#bbf7d0', dot: '#22c55e' };
 }
 
-// Resilient doctor portrait avatar with SVG initials fallback
+// Resilient doctor portrait avatar (omits photos as requested)
 export function DoctorPortrait({
   name,
   imageUrl,
@@ -59,61 +59,7 @@ export function DoctorPortrait({
   department?: string | null;
   size?: number;
 }) {
-  const [imgError, setImgError] = useState(false);
-  const theme = getDepartmentTheme(department);
-
-  const cleanName = name.replace(/^(Dr\.|Doctor|Dr)\s+/i, '').trim();
-  const initials =
-    cleanName
-      .split(' ')
-      .filter(Boolean)
-      .slice(0, 2)
-      .map((w) => w[0]?.toUpperCase())
-      .join('') || 'DR';
-
-  return (
-    <div
-      className="doctor-portrait-frame"
-      style={{
-        width: size,
-        height: size,
-        minWidth: size,
-        minHeight: size,
-        borderRadius: size >= 48 ? '14px' : '10px',
-        borderColor: theme.border,
-      }}
-    >
-      {imageUrl && !imgError ? (
-        <img
-          src={imageUrl}
-          alt={name}
-          onError={() => setImgError(true)}
-          className="doctor-portrait-image"
-          loading="lazy"
-        />
-      ) : (
-        <div
-          className="doctor-portrait-fallback"
-          style={{ background: theme.bg, color: theme.text }}
-        >
-          <span className="portrait-initials">{initials}</span>
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            width="14"
-            height="14"
-            className="portrait-stethoscope-icon"
-          >
-            <path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3" />
-            <path d="M8 15v1a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6v-4" />
-            <circle cx="20" cy="10" r="2" />
-          </svg>
-        </div>
-      )}
-    </div>
-  );
+  return null;
 }
 
 export default function DoctorSelect({
@@ -233,14 +179,7 @@ export default function DoctorSelect({
       >
         {selectedDoctor ? (
           <div className="trigger-content">
-            <DoctorPortrait
-              name={selectedDoctor.name}
-              imageUrl={selectedDoctor.image_url}
-              department={selectedDoctor.department}
-              size={52}
-            />
-
-            <div className="trigger-info">
+            <div className="trigger-info" style={{ width: '100%' }}>
               <div className="trigger-title-row">
                 <span className="trigger-name">{selectedDoctor.name}</span>
                 <span
@@ -398,23 +337,8 @@ export default function DoctorSelect({
                       isSelected ? 'option-selected' : ''
                     }`}
                   >
-                    {/* Doctor Portrait */}
-                    <div className="option-portrait-col">
-                      <DoctorPortrait
-                        name={doc.name}
-                        imageUrl={doc.image_url}
-                        department={doc.department}
-                        size={60}
-                      />
-                      <span
-                        className="option-status-dot"
-                        style={{ backgroundColor: theme.dot }}
-                        title="Available for consultation"
-                      />
-                    </div>
-
                     {/* Doctor Details */}
-                    <div className="option-details-col">
+                    <div className="option-details-col" style={{ width: '100%' }}>
                       <div className="option-header-line">
                         <div className="option-name-badges">
                           <h4 className="option-doctor-name">{doc.name}</h4>

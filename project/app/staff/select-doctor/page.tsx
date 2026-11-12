@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import QRCode from 'qrcode';
 import { ALL_DOCTORS_DIRECTORY, DoctorProfile } from '@/lib/doctors-data';
-import { DoctorPortrait } from '@/components/DoctorSelect';
 import { getSupabaseBrowserClient } from '@/lib/supabase-browser';
 
 interface DoctorWithSession extends DoctorProfile {
@@ -380,87 +379,80 @@ export default function SelectDoctorPage() {
             {filteredDoctors.map((doc) => (
               <div
                 key={doc.id}
-                className="doctor-showcase-card"
+                className="doctor-info-card"
                 onClick={() => handleSelectDoctor(doc)}
               >
-                {/* Full-bleed Photo Background with Dark Scrim */}
-                <div className="doctor-showcase-bg-wrapper">
-                  {doc.image_url ? (
-                    <img
-                      src={doc.image_url}
-                      alt={doc.name}
-                      className="doctor-showcase-bg"
-                      loading="lazy"
-                    />
-                  ) : (
-                    <div className="doctor-showcase-bg" />
-                  )}
-                  <div className="doctor-showcase-scrim" />
-                </div>
-
-                {/* Top Badges (Department Pill like WEDDINGS in Image 1 + Room Pill) */}
-                <div className="doctor-showcase-top">
-                  <span className="showcase-dept-pill">
-                    {doc.department || 'GENERAL'}
-                  </span>
-                  <span className="showcase-room-pill">
-                    <span className="showcase-room-dot" />
-                    Room {doc.room_number || 'N/A'}
-                  </span>
-                </div>
-
-                {/* Bottom Content Over Image */}
-                <div className="doctor-showcase-bottom">
-                  <h3 className="showcase-title">{doc.name}</h3>
-                  <p className="showcase-subtitle">{doc.specialization || 'Clinical Specialist'}</p>
-
-                  {doc.description && (
-                    <p className="showcase-bio">{doc.description}</p>
-                  )}
-
-                  <div className="showcase-meta-row">
-                    <span className="showcase-meta-tag">
-                      ⏱ ~{doc.avg_consultation_minutes}m visit
+                {/* Header Information: Name, Room, Specialization, Department */}
+                <div className="doc-info-header">
+                  <div className="doc-info-title-row">
+                    <h3 className="doc-info-name">{doc.name}</h3>
+                    <span className="doc-info-room-badge">
+                      Room {doc.room_number || 'N/A'}
                     </span>
-                    {doc.todaySession ? (
-                      <span className="showcase-meta-tag" style={{ color: '#86efac' }}>
-                        Token #{doc.todaySession.current_token || 0} / {doc.todaySession.total_tokens || 0}
-                      </span>
-                    ) : (
-                      <span className="showcase-meta-tag" style={{ color: '#86efac' }}>
-                        ● Available Today
-                      </span>
-                    )}
                   </div>
 
-                  {/* Actions Bar */}
-                  <div className="showcase-actions-bar" onClick={(e) => e.stopPropagation()}>
-                    <button
-                      type="button"
-                      onClick={() => handleSelectDoctor(doc)}
-                      className="btn-showcase-primary"
-                    >
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" width="16" height="16">
-                        <rect x="3" y="3" width="7" height="7" />
-                        <rect x="14" y="3" width="7" height="7" />
-                        <rect x="14" y="14" width="7" height="7" />
-                        <rect x="3" y="14" width="7" height="7" />
-                      </svg>
-                      Select & View QR
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => {
-                        localStorage.setItem('quevaa_selected_doctor_id', doc.id);
-                        handleProceedToDashboard(doc.id);
-                      }}
-                      className="btn-showcase-glass"
-                      title="Directly manage this doctor's queue on dashboard"
-                    >
-                      Dashboard →
-                    </button>
+                  <div className="doc-info-spec">
+                    {doc.specialization || 'Clinical Specialist'}
                   </div>
+
+                  <div className="doc-info-dept-badge">
+                    {doc.department || 'GENERAL MEDICINE'}
+                  </div>
+                </div>
+
+                {/* Professional Doctor Bio / Description */}
+                <p className="doc-info-desc">
+                  {doc.description || `Specialist in ${doc.department} providing dedicated patient consultation and clinical care.`}
+                </p>
+
+                {/* Dotted Divider */}
+                <div className="doc-info-divider" />
+
+                {/* Metadata Row: Consultation Duration & Queue Availability */}
+                <div className="doc-info-meta-row">
+                  <span className="doc-info-consultation">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="13" height="13" style={{ display: 'inline', verticalAlign: '-1px', marginRight: 5 }}>
+                      <circle cx="12" cy="12" r="10" />
+                      <polyline points="12 6 12 12 16 14" />
+                    </svg>
+                    ~{doc.avg_consultation_minutes || 10} min consultation
+                  </span>
+
+                  <span className="doc-info-status">
+                    <span className="doc-info-status-dot" />
+                    {doc.todaySession
+                      ? `Token #${doc.todaySession.current_token || 0} / ${doc.todaySession.total_tokens || 0}`
+                      : 'Queue Open'}
+                  </span>
+                </div>
+
+                {/* Action Buttons: Clean Green QR Action + Dashboard Secondary */}
+                <div className="doc-info-actions" onClick={(e) => e.stopPropagation()}>
+                  <button
+                    type="button"
+                    onClick={() => handleSelectDoctor(doc)}
+                    className="btn-doc-qr"
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" width="15" height="15">
+                      <rect x="3" y="3" width="7" height="7" rx="1.5" />
+                      <rect x="14" y="3" width="7" height="7" rx="1.5" />
+                      <rect x="14" y="14" width="7" height="7" rx="1.5" />
+                      <rect x="3" y="14" width="7" height="7" rx="1.5" />
+                    </svg>
+                    Select & View QR
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      localStorage.setItem('quevaa_selected_doctor_id', doc.id);
+                      handleProceedToDashboard(doc.id);
+                    }}
+                    className="btn-doc-dashboard"
+                    title="Directly manage this doctor's queue on dashboard"
+                  >
+                    Dashboard →
+                  </button>
                 </div>
               </div>
             ))}
@@ -527,25 +519,27 @@ export default function SelectDoctorPage() {
               ✕
             </button>
 
-            {/* Modal Header */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 20 }}>
-              <DoctorPortrait
-                name={modalDoctor.name}
-                imageUrl={modalDoctor.image_url}
-                department={modalDoctor.department}
-                size={54}
-              />
-              <div>
-                <span className="room-pill" style={{ marginBottom: 4, display: 'inline-block' }}>
-                  Room {modalDoctor.room_number}
+            {/* Modal Header: Clean text information with room, department, and specialization */}
+            <div style={{ marginBottom: 20, paddingRight: 32 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, marginBottom: 8 }}>
+                <span className="doc-info-dept-badge" style={{ margin: 0 }}>
+                  {modalDoctor.department || 'GENERAL MEDICINE'}
                 </span>
-                <h3 style={{ fontSize: '20px', fontWeight: 800, color: 'var(--gray-900)', margin: 0 }}>
-                  {modalDoctor.name}
-                </h3>
-                <p style={{ margin: '2px 0 0', fontSize: '13px', color: 'var(--primary-700)', fontWeight: 600 }}>
-                  {modalDoctor.department} · {modalDoctor.specialization}
-                </p>
+                <span className="doc-info-room-badge">
+                  Room {modalDoctor.room_number || 'N/A'}
+                </span>
               </div>
+              <h3 style={{ fontSize: '22px', fontWeight: 800, color: 'var(--gray-900)', margin: '0 0 4px 0' }}>
+                {modalDoctor.name}
+              </h3>
+              <p style={{ margin: 0, fontSize: '14px', color: '#16a34a', fontWeight: 600 }}>
+                {modalDoctor.specialization || 'Clinical Specialist'}
+              </p>
+              {modalDoctor.description && (
+                <p style={{ margin: '8px 0 0 0', fontSize: '13px', color: 'var(--gray-600)', lineHeight: '1.5' }}>
+                  {modalDoctor.description}
+                </p>
+              )}
             </div>
 
             {/* QR Code Presentation Box */}

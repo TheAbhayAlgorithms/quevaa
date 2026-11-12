@@ -4,7 +4,6 @@ import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { getSupabaseBrowserClient } from '@/lib/supabase-browser';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { DoctorPortrait } from '@/components/DoctorSelect';
 
 // ===========================================
 // Doctor Queue Page
@@ -323,14 +322,6 @@ export default function DoctorQueuePage() {
         {/* Hero: Current Token */}
         <div className="doctor-queue-hero">
           <div className="doctor-queue-info" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14 }}>
-            {selectedDoctor && (
-              <DoctorPortrait
-                name={selectedDoctor.name}
-                imageUrl={selectedDoctor.image_url}
-                department={selectedDoctor.department}
-                size={52}
-              />
-            )}
             <div style={{ textAlign: 'left' }}>
               <h2 style={{ margin: 0, fontSize: '20px' }}>{selectedDoctor?.name}</h2>
               <p style={{ margin: '3px 0 0 0', fontSize: '13px', color: 'var(--gray-600)' }}>

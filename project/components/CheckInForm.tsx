@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { DoctorPortrait } from './DoctorSelect';
 
 // ===========================================
 // CheckInForm Component
@@ -340,12 +339,6 @@ export default function CheckInForm({
       <form onSubmit={handleVerifyAndJoin} className="check-in-form otp-step-form" noValidate>
         {/* Doctor Summary Banner */}
         <div className="doctor-info-banner" style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-          <DoctorPortrait
-            name={doctorName}
-            imageUrl={imageUrl}
-            department={department}
-            size={52}
-          />
           <div style={{ flex: 1, minWidth: 0 }}>
             <h3 className="doctor-name" style={{ margin: 0 }}>{doctorName}</h3>
             <p className="doctor-dept" style={{ margin: '2px 0 0 0' }}>
@@ -494,12 +487,6 @@ export default function CheckInForm({
     <form onSubmit={handleSendOtp} className="check-in-form" noValidate>
       {/* Doctor Summary Banner */}
       <div className="doctor-info-banner" style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-        <DoctorPortrait
-          name={doctorName}
-          imageUrl={imageUrl}
-          department={department}
-          size={56}
-        />
         <div style={{ flex: 1, minWidth: 0 }}>
           <h3 className="doctor-name" style={{ margin: 0 }}>{doctorName}</h3>
           <p className="doctor-dept" style={{ margin: '2px 0 0 0' }}>
